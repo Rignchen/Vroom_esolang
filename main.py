@@ -162,6 +162,7 @@ class vroom:
 				pass
 			case _:
 				match ord(char):
+					# Math
 					case ord("+"): # pop the last 2 values of the stack, add them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
 						self.stack.append(self.stack[-1]+self.stack[-2])
@@ -195,12 +196,16 @@ class vroom:
 					case ord("¬"): # pop the last value of the stack, push the opposite
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack[-1] *= -1
+
+					# Boolean tests
 					case ord(">"): # push 0 to the stack if the last value is positive
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.append(0 if self.stack[-1] > 0 else 1)
 					case ord("<"): # push 0 to the stack if the last value is negative
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.append(0 if self.stack[-1] < 0 else 1)
+
+					# Stack manipulation
 					case ord("→"): # move every value in the stack to the right
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.insert(self.stack[-1],0)
