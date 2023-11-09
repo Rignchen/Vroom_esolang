@@ -156,51 +156,42 @@ class vroom:
 		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
 	def execute(self, char: str) -> None:
 		match self.last_command:
-			# ' '
-			case 32: # add a value to the stack
+			case ord(' '): # add a value to the stack
 				self.stack.append(ord(char))
-			# !
-			case 33: # skip next instruction
+			case ord('#'): # skip next instruction
 				pass
 			case _:
 				match ord(char):
-					# +
-					case 43: # pop the last 2 values of the stack, add them and push the result
+					case ord("+"): # pop the last 2 values of the stack, add them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
 						self.stack.append(self.stack[-1]+self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					# -
-					case 45: # pop the last 2 values of the stack, substract them and push the result
+					case ord("-"): # pop the last 2 values of the stack, substract them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a subtraction")
 						self.stack.append(self.stack[-1]-self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					# *
-					case 42: # pop the last 2 values of the stack, multiply them and push the result
+					case ord("*"): # pop the last 2 values of the stack, multiply them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a multiplication")
 						self.stack.append(self.stack[-1]*self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					# /
-					case 47: # pop the last 2 values of the stack, divide them and push the result
+					case ord("/"): # pop the last 2 values of the stack, divide them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a division")
 						self.stack.append(self.stack[-1]/self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					# %
-					case 37: # pop the last 2 values of the stack, modulo them and push the result
+					case ord("%"): # pop the last 2 values of the stack, modulo them and push the result
 						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a modulo")
 						self.stack.append(self.stack[-1]%self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					# →
-					case 8594: # move every value in the stack to the right
+					case ord("→"): # move every value in the stack to the right
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.insert(self.stack[-1],0)
 						self.stack.pop()
-					# ←
-					case 8592: # move every value in the stack to the left
+					case ord("←"): # move every value in the stack to the left
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.append(self.stack[0])
 						self.stack.pop(0)
