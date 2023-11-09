@@ -6,35 +6,41 @@ As the code want to finish as fast as possible, it won't start if it can't find 
 Once it reaches the end, it will run the square of code specified at the top value of the stack if it exists.
 """
 
+from os import system, name
+system("cls" if name == "nt" else "clear")
+
 class vroom:
-	def __init__(self, file_path:str = None, run:bool = True) -> None:
+	def __init__(self, file_path:str = None) -> None:
 		# Interpreter variables
 		self.warn_error = False # If true, the code will raise an error instead of a warning
-		self.debug_mode = False # If true, the code will print information about the execution
-		self.debug_step_mode = False # If true, the code will wait for a keypress between each step
-		self.debug_pathfinding = False # If true, the code will print the pathfinding map before executing the code
-		self.interpreter_debug_mode = False # If true, the code will print more information but those are not ment to be easy to read
+		self.debug_mode = True # If true, the code will print information about the execution
+		self.debug_step_mode = True # If true, the code will wait for a keypress between each step
+		self.debug_pathfinding = True # If true, the code will print the pathfinding map before executing the code
+		self.interpreter_debug_mode = True # If true, the code will print more information but those are not ment to be easy to read
 
 		# define the variables
 		self.is_running = True
 		self.is_block_running = False
 		self.current_block = 0
 		self.start_slot = [0,0]
+		self.position = self.start_slot.copy()
 		self.finish_slot = [0,2]
 
-		if run:self.main(file_path)
+		try: self.main(file_path)
+		except KeyboardInterrupt: self.error("KeyboardInterrupt")
+		except BaseException:
+			if self.interpreter_debug_mode:raise BaseException(f"\033[95mProgram stopped\033[0m")
+			elif self.is_running: self.error()
 	
 	# Define print function
 	def stop(self):
 		"""stop the program"""
-		global is_running
-		is_running = False
+		self.is_running = False
 		from sys import exit
 		exit()
-	def error(self,message: str = None) -> None:
+	def error(self,message: str = "An unknow error occured") -> None:
 		"""print the error message in red and exit the program"""
-		if message == None: message = f"An unknow error occured"
-		print(f"\033[91mError in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message})\033[0m")
+		print(f"\033[91mError in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message}\033[0m")
 		self.stop()
 	def warn(self,message: str = "", is_error: bool = None) -> None:
 		"""print the warning message in yellow, unless warn_error is True"""
@@ -55,11 +61,8 @@ class vroom:
 		out = "|" + "-"*(len(table[0])) + "|\n|"
 		for i in range(len(table)):
 			for j in range(len(table[i])):
-				if [i,j] == position: 
-					out += f"\033[42m{table[i][j]}\033[0m"
-				else: 
-					self.tprint(f"{i},{j}/{position}")
-					out += str(table[i][j])
+				if [i,j] == position:  out += f"\033[42m{table[i][j]}\033[0m"
+				else:  out += str(table[i][j])
 			out += "|\n|"
 		out += "-"*(len(table[0])) + "|\n"
 		print(out)
@@ -70,12 +73,14 @@ class vroom:
 		if file_path == None: file_path = input("Please enter the file's location: ")
 		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file")
 		try:
-			with open(file_path,"r") as f: code = f.read().split("\n")
+			with open(file_path,"r",encoding="utf-8") as f: code = f.read().split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist")
+		self.stack: list[int] = [] # The storage.make_blocks(code)
 		blocks = self.make_blocks(code)
-		while is_running and 0 <= self.current_block < len(blocks):
+		while self.is_running and 0 <= self.current_block < len(blocks):
 			# execute the code
 			self.map = self.make_map(blocks[self.current_block])
+			if self.map[self.start_slot[0]][self.start_slot[1]] in [0,-1]: self.error(f"No path between start and end")
 			self.run_block(blocks[self.current_block])
 			self.current_block = self.stack[-1]
 
@@ -94,7 +99,9 @@ class vroom:
 
 		# print the map if debug_pathfinding is True
 		if self.debug_pathfinding:
-			for i in map: self.debug(i)
+			out = "Pathinding Map: \n"
+			for i in map: out += str(i).replace("-1","  ") + "\n"
+			self.debug(out)
 
 		return map
 	def calculate_map(self, map: list[list[int]], pos: list[int], length: list[int], distance:int = 0) -> list[list[int]]:
@@ -126,24 +133,33 @@ class vroom:
 			blocks[-1].append(i)
 		return blocks
 	def run_block(self,code: list[str]) -> None:
-		self.position = self.start_slot # The position of the interpreter in the code
-		self.stack: list[int] # The storage
+		self.position = self.start_slot.copy() # The position of the interpreter in the code
 		self.last_command = 0 # Remove the last command executed
 		self.is_block_running = True
 
 		while self.is_block_running:
-			if self.debug_step_mode: input("Press enter to continue")
-			if self.position[1] == len(code)-1: self.error(f"The interpreter can't find next instruction from {self.position[0]}, {self.position[1]}")
+			if self.debug_mode:
+				self.table(code,self.position)
+			if self.position[0] == len(code)-1: self.error(f"The interpreter can't find next instruction")
+			self.execute(code[self.position[0]+1][self.position[1]])
 			self.move()
-			self.execute(code[self.position[0]-1][self.position[1]])
+			if self.debug_mode:
+				self.debug(f"Stack: {self.stack}")
+			if self.debug_step_mode: input("Press enter to continue")
 			if self.position == self.finish_slot: self.is_block_running = False
+		if self.debug_mode:
+			self.table(code,self.position)
+		self.execute(code[self.position[0]+1][self.position[1]])
+		if self.debug_mode:
+			self.debug(f"Stack: {self.stack}")
 
 	# Run
 	def move(self) -> None:
 		"""Move the interpreter to the next position"""
-		if self.position[0] != 0 and self.map[self.position[0]-1][self.position[1]] == self.map[self.position[0]][self.position[1]]-1:
-			self.position[0] -= 1
-			return
+		if self.position[0] != 0:
+			if self.map[self.position[0]-1][self.position[1]] == self.map[self.position[0]][self.position[1]]-1:
+				self.position[0] -= 1
+				return
 		if self.position[0] != len(self.map)-1 and self.map[self.position[0]+1][self.position[1]] == self.map[self.position[0]][self.position[1]]-1:
 			self.position[0] += 1
 			return
@@ -153,71 +169,89 @@ class vroom:
 		if self.position[1] != len(self.map[0])-1 and self.map[self.position[0]][self.position[1]+1] == self.map[self.position[0]][self.position[1]]-1:
 			self.position[1] += 1
 			return
-		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
+		self.error(f"Impossible to find a path to the end")
 	def execute(self, char: str) -> None:
 		match self.last_command:
-			case ord(' '): # add a value to the stack
-				self.stack.append(ord(char))
-			case ord('#'): # skip next instruction
+			case 0:pass
+			# ' '
+			case 32: # add a value to the stack
+				self.stack.insert(0,ord(char))
+			# #
+			case 35: # skip next instruction
 				pass
-			case ord('?'): # if the last value of the stack is not 0, skip next instruction
-				if self.stack[-1] == 0:
-					self.last_command = 0
-					self.execute(char)
-			case _:
+			# ?
+			case 63: # if the last value of the stack is not 0, skip next instruction
+				self.last_command = self.stack[-1] # if it's not 0 it will be set to 0 at the end of the function
+			case _: # the last command is unknown
+				self.tprint(ord(self.last_command))
 				self.last_command = 0
-				match ord(char):
-					# Math
-					case ord("+"): # pop the last 2 values of the stack, add them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
-						self.stack.append(self.stack[-1]+self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("-"): # pop the last 2 values of the stack, substract them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a subtraction")
-						self.stack.append(self.stack[-1]-self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("*"): # pop the last 2 values of the stack, multiply them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a multiplication")
-						self.stack.append(self.stack[-1]*self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("/"): # pop the last 2 values of the stack, divide them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a division")
-						self.stack.append(self.stack[-1]/self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("%"): # pop the last 2 values of the stack, modulo them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a modulo")
-						self.stack.append(self.stack[-1]%self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("^"): # pop the last 2 values of the stack, power them and push the result
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a power")
-						self.stack.append(self.stack[-1]**self.stack[-2])
-						self.stack.pop(-2)
-						self.stack.pop(-2)
-					case ord("¬"): # pop the last value of the stack, push the opposite
-						if len(self.stack) == 0: self.error("The stack is empty")
-						self.stack[-1] *= -1
+		if self.last_command == 0:
+			match ord(char):# Math
+				# +
+				case 43: # pop the last 2 values of the stack, add them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
+					self.stack.append(self.stack[-1]+self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+				# -
+				case 45: # pop the last 2 values of the stack, substract them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a subtraction")
+					self.stack.append(self.stack[-1]-self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+				# *
+				case 42: # pop the last 2 values of the stack, multiply them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a multiplication")
+					self.stack.append(self.stack[-1]*self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+				# /
+				case 47: # pop the last 2 values of the stack, divide them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a division")
+					self.stack.append(self.stack[-1]/self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+				# %
+				case 37: # pop the last 2 values of the stack, modulo them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a modulo")
+					self.stack.append(self.stack[-1]%self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+				# ^
+				case 94: # pop the last 2 values of the stack, power them and push the result
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a power")
+					self.stack.append(self.stack[-1]**self.stack[-2])
+					self.stack.pop(-2)
+					self.stack.pop(-2)
+			  		# ¬
+				case 172: # pop the last value of the stack, push the opposite
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack[-1] *= -1
 
-					# Boolean tests
-					case ord(">"): # push 0 to the stack if the last value is positive
-						if len(self.stack) == 0: self.error("The stack is empty")
-						self.stack.append(0 if self.stack[-1] > 0 else 1)
-					case ord("<"): # push 0 to the stack if the last value is negative
-						if len(self.stack) == 0: self.error("The stack is empty")
-						self.stack.append(0 if self.stack[-1] < 0 else 1)
+				# Boolean tests
+				# >
+				case 62: # push 0 to the stack if the last value is positive
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.append(0 if self.stack[-1] > 0 else 1)
+				# <
+				case 60: # push 0 to the stack if the last value is negative
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.append(0 if self.stack[-1] < 0 else 1)
 
-					# Stack manipulation
-					case ord("→"): # move every value in the stack to the right
-						if len(self.stack) == 0: self.error("The stack is empty")
-						self.stack.insert(self.stack[-1],0)
-						self.stack.pop()
-					case ord("←"): # move every value in the stack to the left
-						if len(self.stack) == 0: self.error("The stack is empty")
-						self.stack.append(self.stack[0])
-						self.stack.pop(0)
-					case _: self.last_command = ord(char)
+				# Stack manipulation
+			 	# →
+				case 8594: # move every value in the stack to the right
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.insert(self.stack[-1],0)
+					self.stack.pop()
+				# ←
+				case 8592: # move every value in the stack to the left
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.append(self.stack[0])
+					self.stack.pop(0)
+				case _:
+					self.last_command = ord(char)
+		else: self.last_command = 0
 	pass
+
+if __name__ == "__main__": vroom()
