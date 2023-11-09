@@ -128,6 +128,7 @@ class vroom:
 	def run_block(self,code: list[str]) -> None:
 		self.position = self.start_slot # The position of the interpreter in the code
 		self.stack: list[int] # The storage
+		self.last_command = 0 # Remove the last command executed
 		self.is_block_running = True
 
 		while self.is_block_running:
@@ -154,15 +155,18 @@ class vroom:
 			return
 		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
 	def execute(self, char: str) -> None:
-			match ord(char):
-				# →
-				case 8594: 
-					if len(self.stack) == 0: self.error("The stack is empty")
-					self.stack.insert(self.stack[-1],0)
-					self.stack.pop()
-				# ←
-				case 8592:
-					if len(self.stack) == 0: self.error("The stack is empty")
-					self.stack.append(self.stack[0])
-					self.stack.pop(0)
+		match self.last_command:
+			case _:
+				match ord(char):
+					# →
+					case 8594: # move every value in the stack to the right
+						if len(self.stack) == 0: self.error("The stack is empty")
+						self.stack.insert(self.stack[-1],0)
+						self.stack.pop()
+					# ←
+					case 8592: # move every value in the stack to the left
+						if len(self.stack) == 0: self.error("The stack is empty")
+						self.stack.append(self.stack[0])
+						self.stack.pop(0)
+		self.last_command = ord(char)
 	pass
