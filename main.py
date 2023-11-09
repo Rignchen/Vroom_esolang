@@ -160,7 +160,12 @@ class vroom:
 				self.stack.append(ord(char))
 			case ord('#'): # skip next instruction
 				pass
+			case ord('?'): # if the last value of the stack is not 0, skip next instruction
+				if self.stack[-1] == 0:
+					self.last_command = 0
+					self.execute(char)
 			case _:
+				self.last_command = 0
 				match ord(char):
 					# Math
 					case ord("+"): # pop the last 2 values of the stack, add them and push the result
@@ -214,5 +219,5 @@ class vroom:
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.append(self.stack[0])
 						self.stack.pop(0)
-		self.last_command = ord(char)
+					case _: self.last_command = ord(char)
 	pass
