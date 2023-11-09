@@ -62,6 +62,7 @@ class vroom:
 		out += "-"*(len(table[0])) + "|\n"
 		print(out)
 
+	# Main code
 	def main(self, file_path: str):
 		"""Execute code from a .vroom file"""
 		if file_path == None: file_path = input("Please enter the file's location: ")
@@ -71,6 +72,42 @@ class vroom:
 		except FileNotFoundError: self.error(f"File {file_path} does not exist")
 		blocks = self.make_blocks(code)
 
+	# Make the map
+	def make_map(self, code: list[str]) -> list[list[int]]:
+		pos = self.finish_slot
+		length = [len(code), len(code[0])]
+
+		# make the map
+		map = []
+		for i in range(length[0]):
+			map.append([])
+			for j in range(length[1]): map[-1].append(0 if code[i][j] == " " else -1)
+		
+		map = self.calculate_map(map,pos,length)
+
+		# print the map if debug_pathfinding is True
+		if self.debug_pathfinding:
+			for i in map: self.debug(i)
+
+		return map
+	def calculate_map(self, map: list[list[int]], pos: list[int], length: list[int], distance:int = 0) -> list[list[int]]:
+		"""Calculate the pathfinding map"""
+		if pos!= self.finish_slot: map[pos[0]][pos[1]] = distance
+		if pos[0] != 0:
+			if map[pos[0]-1][pos[1]] == 0: map = self.calculate_map(map,[pos[0]-1,pos[1]],length,distance+1)
+			elif map[pos[0]-1][pos[1]] > distance+1: map = self.calculate_map(map,[pos[0]-1,pos[1]],length,distance+1)
+		if pos[0] != length[0]-1:
+			if map[pos[0]+1][pos[1]] == 0: map = self.calculate_map(map,[pos[0]+1,pos[1]],length,distance+1)
+			elif map[pos[0]+1][pos[1]] > distance+1: map = self.calculate_map(map,[pos[0]+1,pos[1]],length,distance+1)
+		if pos[1] != 0:
+			if map[pos[0]][pos[1]-1] == 0: map = self.calculate_map(map,[pos[0],pos[1]-1],length,distance+1)
+			elif map[pos[0]][pos[1]-1] > distance+1: map = self.calculate_map(map,[pos[0],pos[1]-1],length,distance+1)
+		if pos[1] != length[1]-1:
+			if map[pos[0]][pos[1]+1] == 0: map = self.calculate_map(map,[pos[0],pos[1]+1],length,distance+1)
+			elif map[pos[0]][pos[1]+1] > distance+1: map = self.calculate_map(map,[pos[0],pos[1]+1],length,distance+1)
+		return map
+
+	# Blocks
 	def make_blocks(self,code: list[str]) -> list[list[str]]:
 		blocks = [[]]
 		for i in code:
