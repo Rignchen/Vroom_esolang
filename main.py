@@ -61,3 +61,11 @@ class vroom:
 			out += "|\n|"
 		out += "-"*(len(table[0])) + "|\n"
 		print(out)
+
+	def main(self, file_path: str):
+		"""Execute code from a .vroom file"""
+		if file_path == None: file_path = input("Please enter the file's location: ")
+		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file")
+		try:
+			with open(file_path,"r") as f: code = f.read().split("\n")
+		except FileNotFoundError: self.error(f"File {file_path} does not exist")
