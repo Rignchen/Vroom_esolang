@@ -187,6 +187,16 @@ class vroom:
 						self.stack.append(self.stack[-1]%self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
+					case ord("^"): # pop the last 2 values of the stack, power them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a power")
+						self.stack.append(self.stack[-1]**self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
+					case ord("="): # pop the last 2 values of the stack, check if they are equal, push 1 if true, 0 if false
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a comparison")
+						self.stack.append(1 if self.stack[-1] == self.stack[-2] else 0)
+						self.stack.pop(-2)
+						self.stack.pop(-2)
 					case ord("→"): # move every value in the stack to the right
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.insert(self.stack[-1],0)
