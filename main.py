@@ -133,6 +133,7 @@ class vroom:
 		while self.is_block_running:
 			if self.debug_step_mode: input("Press enter to continue")
 			if self.position[1] == len(code)-1: self.error(f"The interpreter can't find next instruction from {self.position[0]}, {self.position[1]}")
+			self.execute(code[self.position[0]-1][self.position[1]])
 			self.move()
 			if self.position == self.finish_slot: self.is_block_running = False
 
@@ -152,3 +153,6 @@ class vroom:
 			self.position[1] += 1
 			return
 		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
+	def execute(self, char: str) -> None:
+		pass
+	pass
