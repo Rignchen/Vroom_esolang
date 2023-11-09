@@ -164,6 +164,36 @@ class vroom:
 				pass
 			case _:
 				match ord(char):
+					# +
+					case 43: # pop the last 2 values of the stack, add them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
+						self.stack.append(self.stack[-1]+self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
+					# -
+					case 45: # pop the last 2 values of the stack, substract them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a subtraction")
+						self.stack.append(self.stack[-1]-self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
+					# *
+					case 42: # pop the last 2 values of the stack, multiply them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a multiplication")
+						self.stack.append(self.stack[-1]*self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
+					# /
+					case 47: # pop the last 2 values of the stack, divide them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a division")
+						self.stack.append(self.stack[-1]/self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
+					# %
+					case 37: # pop the last 2 values of the stack, modulo them and push the result
+						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a modulo")
+						self.stack.append(self.stack[-1]%self.stack[-2])
+						self.stack.pop(-2)
+						self.stack.pop(-2)
 					# →
 					case 8594: # move every value in the stack to the right
 						if len(self.stack) == 0: self.error("The stack is empty")
