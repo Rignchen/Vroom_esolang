@@ -21,6 +21,8 @@ class vroom:
 		self.current_block = 0
 		self.start_slot = [0,0]
 		self.finish_slot = [0,2]
+
+		if run:self.main(file_path)
 	
 	# Define print function
 	def stop(self):
@@ -131,4 +133,22 @@ class vroom:
 		while self.is_block_running:
 			if self.debug_step_mode: input("Press enter to continue")
 			if self.position[1] == len(code)-1: self.error(f"The interpreter can't find next instruction from {self.position[0]}, {self.position[1]}")
+			self.move()
 			if self.position == self.finish_slot: self.is_block_running = False
+
+	# Run
+	def move(self) -> None:
+		"""Move the interpreter to the next position"""
+		if self.position[0] != 0 and self.map[self.position[0]-1][self.position[1]] == self.map[self.position[0]][self.position[1]]-1:
+			self.position[0] -= 1
+			return
+		if self.position[0] != len(self.map)-1 and self.map[self.position[0]+1][self.position[1]] == self.map[self.position[0]][self.position[1]]-1:
+			self.position[0] += 1
+			return
+		if self.position[1] != 0 and self.map[self.position[0]][self.position[1]-1] == self.map[self.position[0]][self.position[1]]-1:
+			self.position[1] -= 1
+			return
+		if self.position[1] != len(self.map[0])-1 and self.map[self.position[0]][self.position[1]+1] == self.map[self.position[0]][self.position[1]]-1:
+			self.position[1] += 1
+			return
+		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
