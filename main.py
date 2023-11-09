@@ -159,6 +159,9 @@ class vroom:
 			# ' '
 			case 32: # add a value to the stack
 				self.stack.append(ord(char))
+			# !
+			case 33: # skip next instruction
+				pass
 			case _:
 				match ord(char):
 					# →
