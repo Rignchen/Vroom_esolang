@@ -186,7 +186,21 @@ class vroom:
 				self.tprint(ord(self.last_command))
 				self.last_command = 0
 		if self.last_command == 0:
-			match ord(char):# Math
+			match ord(char):
+				# I/O
+				# p
+				case 112: # pop the last value of the stack and print it as ascii character
+					if len(self.stack) == 0: self.error("The stack is empty")
+					print(chr(self.stack[-1]),end="")
+					self.stack.pop(-1)
+				# i
+				case 105: #push a value input by the user at the beginning of the stack (each character a value + the len of the input)
+					inp = input()
+					for i in inp:
+						self.stack.insert(0,ord(i))
+					self.stack.insert(0,len(inp))
+				
+				# Math
 				# +
 				case 43: # pop the last 2 values of the stack, add them and push the result
 					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute an addition")
