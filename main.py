@@ -192,6 +192,9 @@ class vroom:
 						self.stack.append(self.stack[-1]**self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
+					case ord("¬"): # pop the last value of the stack, push the opposite
+						if len(self.stack) == 0: self.error("The stack is empty")
+						self.stack[-1] *= -1
 					case ord(">"): # push 0 to the stack if the last value is positive
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.append(0 if self.stack[-1] > 0 else 1)
