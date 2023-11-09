@@ -134,8 +134,8 @@ class vroom:
 		while self.is_block_running:
 			if self.debug_step_mode: input("Press enter to continue")
 			if self.position[1] == len(code)-1: self.error(f"The interpreter can't find next instruction from {self.position[0]}, {self.position[1]}")
-			self.execute(code[self.position[0]-1][self.position[1]])
 			self.move()
+			self.execute(code[self.position[0]-1][self.position[1]])
 			if self.position == self.finish_slot: self.is_block_running = False
 
 	# Run
