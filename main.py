@@ -247,10 +247,12 @@ class vroom:
 				case 62: # push 0 to the stack if the last value is positive
 					if len(self.stack) == 0: self.error("The stack is empty")
 					self.stack.append(0 if self.stack[-1] > 0 else 1)
+					self.stack.pop(-2)
 				# <
 				case 60: # push 0 to the stack if the last value is negative
 					if len(self.stack) == 0: self.error("The stack is empty")
 					self.stack.append(0 if self.stack[-1] < 0 else 1)
+					self.stack.pop(-2)
 
 				# Stack manipulation
 			 	# →
@@ -275,6 +277,11 @@ class vroom:
 				case 50: # duplicate the last value of the stack
 					if len(self.stack) == 0: self.error("The stack is empty")
 					self.stack.append(self.stack[-1])
+
+				# Others
+				# §
+				case 167: # do nothing
+					pass
 				case _:
 					self.last_command = ord(char)
 		else: self.last_command = 0
