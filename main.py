@@ -71,6 +71,11 @@ class vroom:
 			with open(file_path,"r") as f: code = f.read().split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist")
 		blocks = self.make_blocks(code)
+		while is_running and 0 <= self.current_block < len(blocks):
+			# execute the code
+			self.map = self.make_map(blocks[self.current_block])
+			self.run_block(blocks[self.current_block])
+			self.current_block = self.stack[-1]
 
 	# Make the map
 	def make_map(self, code: list[str]) -> list[list[int]]:
@@ -118,3 +123,12 @@ class vroom:
 			elif length != len(i): self.error("All lines need to be the same length inside a block")
 			blocks[-1].append(i)
 		return blocks
+	def run_block(self,code: list[str]) -> None:
+		self.position = self.start_slot # The position of the interpreter in the code
+		self.stack: list[int] # The storage
+		self.is_block_running = True
+
+		while self.is_block_running:
+			if self.debug_step_mode: input("Press enter to continue")
+			if self.position[1] == len(code)-1: self.error(f"The interpreter can't find next instruction from {self.position[0]}, {self.position[1]}")
+			if self.position == self.finish_slot: self.is_block_running = False
