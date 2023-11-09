@@ -154,5 +154,15 @@ class vroom:
 			return
 		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
 	def execute(self, char: str) -> None:
-		pass
+			match ord(char):
+				# →
+				case 8594: 
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.insert(self.stack[-1],0)
+					self.stack.pop()
+				# ←
+				case 8592:
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.append(self.stack[0])
+					self.stack.pop(0)
 	pass
