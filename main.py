@@ -1,6 +1,6 @@
 """
 Vroom is a 2d programming language with an execution order based on pathfinding algorithms.
-The code will look for the shortest path between 1:1 and 1:3 and will wun the code in that order.
+The code will look for the shortest path between 0:0 and 0:2 and will wun the code in that order.
 The code's executeîon order can only move on spaced, and allways executes the code under if.
 As the code want to finish as fast as possible, it won't start if it can't find a path to the end.
 Once it reaches the end, it will run the square of code specified at the top value of the stack if it exists.
@@ -33,23 +33,23 @@ class vroom:
 		exit()
 	def error(self,message: str = None) -> None:
 		"""print the error message in red and exit the program"""
-		if message == None: message = f"An unknow error occured at {self.position} in block {self.current_block}"
-		print("\033[91mError: " + str(message) + "\033[0m")
+		if message == None: message = f"An unknow error occured"
+		print(f"\033[91mError in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message})\033[0m")
 		self.stop()
 	def warn(self,message: str = "", is_error: bool = None) -> None:
 		"""print the warning message in yellow, unless warn_error is True"""
 		if is_error == None: is_error = self.warn_error
 		if is_error: self.error(message + " (warn -> error)")
-		else: print("\033[93mWarning: " + str(message) + "\033[0m")
+		else: print(f"\033[93mWarning  in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message}\033[0m")
 	def debug(self,message: str|dict) -> None:
 		"""print the debug message in blue, unless debug_mode is False"""
-		if self.debug_mode: print("\033[94mDebug: " + str(message) + "\033[0m")
+		if self.debug_mode: print(f"\033[94mDebug: {message}\033[0m")
 	def iprint(self,message: str) -> None:
 		"""print the message in green, used to debug the interpreter"""
-		if self.interpreter_debug_mode: print("\033[92m" + str(message) + "\033[0m")
+		if self.interpreter_debug_mode: print(f"\033[92m{message}\033[0m")
 	def tprint(self,message: str) -> None:
 		"""print the message in pink, used to debug the interpreter as a temporary print"""
-		print("\033[95m" + repr(message) + "\033[0m")
+		print(f"\033[95m{repr(message)}\033[0m")
 	def table(self,table: list[list[str]], position: list[int]) -> None:
 		"""print the table with the position with a green background"""
 		out = "|" + "-"*(len(table[0])) + "|\n|"
@@ -192,11 +192,12 @@ class vroom:
 						self.stack.append(self.stack[-1]**self.stack[-2])
 						self.stack.pop(-2)
 						self.stack.pop(-2)
-					case ord("="): # pop the last 2 values of the stack, check if they are equal, push 1 if true, 0 if false
-						if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a comparison")
-						self.stack.append(1 if self.stack[-1] == self.stack[-2] else 0)
-						self.stack.pop(-2)
-						self.stack.pop(-2)
+					case ord(">"): # push 0 to the stack if the last value is positive
+						if len(self.stack) == 0: self.error("The stack is empty")
+						self.stack.append(0 if self.stack[-1] > 0 else 1)
+					case ord("<"): # push 0 to the stack if the last value is negative
+						if len(self.stack) == 0: self.error("The stack is empty")
+						self.stack.append(0 if self.stack[-1] < 0 else 1)
 					case ord("→"): # move every value in the stack to the right
 						if len(self.stack) == 0: self.error("The stack is empty")
 						self.stack.insert(self.stack[-1],0)
