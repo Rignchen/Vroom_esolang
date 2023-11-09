@@ -69,3 +69,15 @@ class vroom:
 		try:
 			with open(file_path,"r") as f: code = f.read().split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist")
+		blocks = self.make_blocks(code)
+
+	def make_blocks(self,code: list[str]) -> list[list[str]]:
+		blocks = [[]]
+		for i in code:
+			if i == '':
+				if blocks[-1] != []: blocks.append([])
+				continue
+			if blocks[-1] == []: length = len(i)
+			elif length != len(i): self.error("All lines need to be the same length inside a block")
+			blocks[-1].append(i)
+		return blocks
