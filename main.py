@@ -249,6 +249,18 @@ class vroom:
 					if len(self.stack) == 0: self.error("The stack is empty")
 					self.stack.append(self.stack[0])
 					self.stack.pop(0)
+				# ⇄
+				case 8644: # swap the last 2 values of the stack
+					if len(self.stack) < 2: self.error("The stack needs at least 2 values to swap")
+					self.stack[-1],self.stack[-2] = self.stack[-2],self.stack[-1]
+				# 0
+				case 48: # pop the last value of the stack
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.pop()
+				# 2
+				case 50: # duplicate the last value of the stack
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.append(self.stack[-1])
 				case _:
 					self.last_command = ord(char)
 		else: self.last_command = 0
