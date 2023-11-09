@@ -156,6 +156,9 @@ class vroom:
 		self.error(f"Impossible to find a path to the end from {self.position[0]}, {self.position[1]}")
 	def execute(self, char: str) -> None:
 		match self.last_command:
+			# ' '
+			case 32: # add a value to the stack
+				self.stack.append(ord(char))
 			case _:
 				match ord(char):
 					# →
