@@ -135,6 +135,7 @@ class vroom:
 			if blocks[-1] == []: length = len(i)
 			elif length != len(i): self.error("All lines need to be the same length inside a block")
 			blocks[-1].append(i)
+		if blocks[-1] == []: blocks.pop()
 		return blocks
 	def run_block(self,code: list[str]) -> None:
 		self.position = self.start_slot.copy() # The position of the interpreter in the code
