@@ -273,6 +273,10 @@ class vroom:
 				case 8644: # swap the last 2 values of the stack
 					if len(self.stack) < 2: self.error("The stack needs at least 2 values to swap")
 					self.stack[-1],self.stack[-2] = self.stack[-2],self.stack[-1]
+				# ↩
+				case 8617: # reverse the stack
+					if len(self.stack) == 0: self.error("The stack is empty")
+					self.stack.reverse()
 				# 0
 				case 48: # pop the last value of the stack
 					if len(self.stack) == 0: self.error("The stack is empty")
