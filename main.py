@@ -258,7 +258,7 @@ class vroom:
 			 	# →
 				case 8594: # move every value in the stack to the right
 					if len(self.stack) == 0: self.error("The stack is empty")
-					self.stack.insert(self.stack[-1],0)
+					self.stack.insert(0,self.stack[-1])
 					self.stack.pop()
 				# ←
 				case 8592: # move every value in the stack to the left
