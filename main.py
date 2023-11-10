@@ -27,7 +27,7 @@ class vroom:
 		self.finish_slot = [0,2]
 
 		try: self.main(file_path)
-		except KeyboardInterrupt: self.error("KeyboardInterrupt")
+		except KeyboardInterrupt: self.error("Keyboard Interruption", False)
 		except BaseException:
 			if self.interpreter_debug_mode:raise BaseException(f"\033[95mProgram stopped\033[0m")
 			elif self.is_running: self.error()
@@ -38,9 +38,10 @@ class vroom:
 		self.is_running = False
 		from sys import exit
 		exit()
-	def error(self,message: str = "An unknow error occured") -> None:
+	def error(self,message: str = "An unknow error occured",isInBlock: bool = True) -> None:
 		"""print the error message in red and exit the program"""
-		print(f"\033[91mError in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message}\033[0m")
+		out = f" in block {self.current_block} at {self.position[0]}/{self.position[1]}" if isInBlock else ""
+		print(f"\033[91mError {out}: {message}\033[0m")
 		self.stop()
 	def warn(self,message: str = "", is_error: bool = None) -> None:
 		"""print the warning message in yellow, unless warn_error is True"""
@@ -71,16 +72,16 @@ class vroom:
 	def main(self, file_path: str):
 		"""Execute code from a .vroom file"""
 		if file_path == None: file_path = input("Please enter the file's location: ")
-		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file")
+		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file",False)
 		try:
 			with open(file_path,"r",encoding="utf-8") as f: code = f.read().split("\n")
-		except FileNotFoundError: self.error(f"File {file_path} does not exist")
+		except FileNotFoundError: self.error(f"File {file_path} does not exist",False)
 		self.stack: list[int] = [] # The storage.make_blocks(code)
 		blocks = self.make_blocks(code)
 		while self.is_running and 0 <= self.current_block < len(blocks):
 			# execute the code
 			self.map = self.make_map(blocks[self.current_block])
-			if self.map[self.start_slot[0]][self.start_slot[1]] in [0,-1]: self.error(f"No path between start and end")
+			if self.map[self.start_slot[0]][self.start_slot[1]] in [0,-1]: self.error(f"No path between start and end in block {self.current_block}", False)
 			self.run_block(blocks[self.current_block])
 			if len(self.stack)>0 and len(blocks)>self.stack[-1]:
 				self.current_block = self.stack[-1]
