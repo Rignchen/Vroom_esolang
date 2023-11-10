@@ -82,7 +82,10 @@ class vroom:
 			self.map = self.make_map(blocks[self.current_block])
 			if self.map[self.start_slot[0]][self.start_slot[1]] in [0,-1]: self.error(f"No path between start and end")
 			self.run_block(blocks[self.current_block])
-			self.current_block = self.stack[-1]
+			if len(self.stack)>0 and len(blocks)>self.stack[-1]:
+				self.current_block = self.stack[-1]
+				self.stack.pop()
+			else: break
 
 	# Make the map
 	def make_map(self, code: list[str]) -> list[list[int]]:
