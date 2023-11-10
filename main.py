@@ -186,7 +186,7 @@ class vroom:
 				pass
 			# ?
 			case 63: # if the last value of the stack is not 0, skip next instruction
-				self.last_command = self.stack[-1] # if it's not 0 it will be set to 0 at the end of the function
+				self.last_command = -abs(self.stack[-1]) # if it's not 0 it will be set to 0 at the end of the function
 			case _: # the last command is unknown
 				self.tprint(ord(self.last_command))
 				self.last_command = 0
@@ -242,7 +242,7 @@ class vroom:
 					self.stack.append(self.stack[-1]**self.stack[-2])
 					self.stack.pop(-2)
 					self.stack.pop(-2)
-			  		# ¬
+			  	# ¬
 				case 172: # pop the last value of the stack, push the opposite
 					if len(self.stack) == 0: self.error("The stack is empty")
 					self.stack[-1] *= -1
@@ -297,3 +297,29 @@ class vroom:
 	pass
 
 if __name__ == "__main__": vroom()
+
+"""
+All commands:
+
+' ' -> add a value to the stack
+# -> skip next instruction
+? -> if the last value of the stack is not 0, skip next instruction
+p -> print the last value of the stack as ascii character
+i -> push a value input by the user at the beginning of the stack (each character a value + the len of the input)
++ -> pop the last 2 values of the stack, add them and push the result
+- -> pop the last 2 values of the stack, substract them and push the result
+* -> pop the last 2 values of the stack, multiply them and push the result
+/ -> pop the last 2 values of the stack, divide them and push the result
+% -> pop the last 2 values of the stack, modulo them and push the result
+^ -> pop the last 2 values of the stack, power them and push the result
+¬ -> pop the last value of the stack, push the opposite
+> -> push 0 to the stack if the last value is positive
+< -> push 0 to the stack if the last value is negative
+→ -> move every value in the stack to the right
+← -> move every value in the stack to the left
+⇄ -> swap the last 2 values of the stack
+↩ -> reverse the stack
+0 -> pop the last value of the stack
+2 -> duplicate the last value of the stack
+§ -> do nothing
+"""
