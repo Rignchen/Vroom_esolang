@@ -13,10 +13,10 @@ class vroom:
 	def __init__(self, file_path:str = None) -> None:
 		# Interpreter variables
 		self.warn_error = False # If true, the code will raise an error instead of a warning
-		self.debug_mode = True # If true, the code will print information about the execution
-		self.debug_step_mode = True # If true, the code will wait for a keypress between each step
-		self.debug_pathfinding = True # If true, the code will print the pathfinding map before executing the code
-		self.interpreter_debug_mode = True # If true, the code will print more information but those are not ment to be easy to read
+		self.debug_mode = False # If true, the code will print information about the execution
+		self.debug_step_mode = False # If true, the code will wait for a keypress between each step
+		self.debug_pathfinding = False # If true, the code will print the pathfinding map before executing the code
+		self.interpreter_debug_mode = False # If true, the code will print more information but those are not ment to be easy to read
 
 		# define the variables
 		self.is_running = True
@@ -74,7 +74,7 @@ class vroom:
 		if file_path == None: file_path = input("Please enter the file's location: ")
 		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file",False)
 		try:
-			with open(file_path,"r",encoding="utf-8") as f: code = f.read().split("\n")
+			with open(file_path,"r",encoding="utf-8") as f: code = f.read().replace("\t",4*" ").split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist",False)
 		self.stack: list[int] = [] # The storage.make_blocks(code)
 		blocks = self.make_blocks(code)
