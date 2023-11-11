@@ -6,17 +6,16 @@ As the code want to finish as fast as possible, it won't start if it can't find 
 Once it reaches the end, it will run the square of code specified at the top value of the stack if it exists.
 """
 
-from os import system, name
-system("cls" if name == "nt" else "clear")
+#interpreter settings
+warn_error: bool = False				# If true, the code will raise an error instead of a warning
+debug_mode: bool = False				# If true, the code will print information about the execution
+debug_step_mode: bool = False			# If true, the code will wait for a keypress between each step
+debug_pathfinding: bool = False			# If true, the code will print the pathfinding map before executing the code
+interpreter_debug_mode: bool = False	# If true, the code will print more information but those are not ment to be easy to read
 
 class vroom:
-	def __init__(self, file_path:str = None) -> None:
-		# Interpreter variables
-		self.warn_error = False # If true, the code will raise an error instead of a warning
-		self.debug_mode = False # If true, the code will print information about the execution
-		self.debug_step_mode = False # If true, the code will wait for a keypress between each step
-		self.debug_pathfinding = False # If true, the code will print the pathfinding map before executing the code
-		self.interpreter_debug_mode = False # If true, the code will print more information but those are not ment to be easy to read
+	def __init__(self, file_path:str = None, warn_error: bool = False, debug_mode: bool = False, debug_step_mode: bool = False, debug_pathfinding: bool = False, interpreter_debug_mode: bool = False) -> None:
+		self.warn_error, self.debug_mode, self.debug_step_mode, self.debug_pathfinding, self.interpreter_debug_mode = warn_error, debug_mode, debug_step_mode, debug_pathfinding, interpreter_debug_mode
 
 		# define the variables
 		self.is_running = True
@@ -296,7 +295,10 @@ class vroom:
 		else: self.last_command = 0
 	pass
 
-if __name__ == "__main__": vroom()
+if __name__ == "__main__": 
+	from os import system, name
+	system("cls" if name == "nt" else "clear")
+	vroom(warn_error = warn_error, debug_mode = debug_mode, debug_step_mode = debug_step_mode, debug_pathfinding = debug_pathfinding, interpreter_debug_mode = interpreter_debug_mode)
 
 """
 All commands:
