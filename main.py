@@ -40,22 +40,22 @@ class vroom:
 	def error(self,message: str = "An unknow error occured",isInBlock: bool = True) -> None:
 		"""print the error message in red and exit the program"""
 		out = f" in block {self.current_block} at {self.position[0]}/{self.position[1]}" if isInBlock else ""
-		print(f"\033[91mError {out}: {message}\033[0m")
+		print(f"\n\033[91mError {out}: {message}\033[0m")
 		self.stop()
 	def warn(self,message: str = "", is_error: bool = None) -> None:
 		"""print the warning message in yellow, unless warn_error is True"""
 		if is_error == None: is_error = self.warn_error
 		if is_error: self.error(message + " (warn -> error)")
-		else: print(f"\033[93mWarning  in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message}\033[0m")
+		else: print(f"\n\033[93mWarning  in block {self.current_block} at {self.position[0]}/{self.position[1]} : {message}\033[0m")
 	def debug(self,message: str|dict) -> None:
 		"""print the debug message in blue, unless debug_mode is False"""
-		if self.debug_mode: print(f"\033[94mDebug: {message}\033[0m")
+		if self.debug_mode: print(f"\n\033[94mDebug: {message}\033[0m")
 	def iprint(self,message: str) -> None:
 		"""print the message in green, used to debug the interpreter"""
-		if self.interpreter_debug_mode: print(f"\033[92m{message}\033[0m")
+		if self.interpreter_debug_mode: print(f"\n\033[92m{message}\033[0m")
 	def tprint(self,message: str) -> None:
 		"""print the message in pink, used to debug the interpreter as a temporary print"""
-		print(f"\033[95m{repr(message)}\033[0m")
+		print(f"\n\033[95m{repr(message)}\033[0m")
 	def table(self,table: list[list[str]], position: list[int]) -> None:
 		"""print the table with the position with a green background"""
 		out = "|" + "-"*(len(table[0])) + "|\n|"
