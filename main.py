@@ -226,7 +226,7 @@ class vroom:
 				# /
 				case 47: # pop the last 2 values of the stack, divide them and push the result
 					if len(self.stack) < 2: self.error("The stack needs at least 2 values to execute a division")
-					self.stack.append(self.stack[-1]/self.stack[-2])
+					self.stack.append(self.stack[-1]//self.stack[-2])
 					self.stack.pop(-2)
 					self.stack.pop(-2)
 				# %
