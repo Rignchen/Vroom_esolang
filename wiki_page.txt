@@ -1,0 +1,138 @@
+{{infobox proglang
+|name=Vroom
+|author=Rignchen
+|year=[[:Category:2023|2023]]
+|memsys=stack
+|dimensions=[[:Category:Multi-dimensional_languages|Three-dimensional languages]]
+|class=[[:Category:Turing complete|Turing complete]]
+|refimpl=[https://github.com/Rignchen/Vroom_esolang Vroom]
+|files=<code>.vroom</code>
+}}
+'''Vroom''' is a three-dimensional esolanng based on the concept of pathfinding
+Every vroom program is composed of 1/+ blocks of code, codes are separated by an empty line, the code start in the first block
+The cursor starts in slot 1:1 (top left), it then move to 1:3 through the fastest way possible, however it can only move on spaces
+Each time the cursor moves, it will run the instruction written under it (so 1:1 run the instruction in 1:2 and 42:314 runs 42:315)
+Once it reach the end of the program, it will go to the beginning of another block of code, the code is chosen by the last value of the stack
+If the stack is empty or the block doesn't exist, the program will stop
+Sice some ide replace <code>    </code> with a tabulation, tabulation are replaced by 4 spaces when the code is readed
+
+
+==Commands==
+
+{| class="wikitable"
+!Name
+!Description
+|-
+|<code>' '</code>
+|Add the [https://www.utf8-chartable.de/ ASCII value] of the next operation to the stack (also skip the next operation)
+|-
+|<code>#</code>
+|Skip next instruction
+|-
+|<code>?</code>
+|If the last value of the stack is not 0, skip next instruction
+|-
+|<code>p</code>
+|Print the last value of the stack as [https://www.utf8-chartable.de/ ASCII character]
+|-
+|<code>i</code>
+|Push a value input by the user at the beginning of the stack (each character a value + the len of the input)
+|-
+|<code>+</code>
+|Pop the last 2 values of the stack, add them and push the result
+|-
+|<code>-</code>
+|Pop the last 2 values of the stack, substract them and push the result
+|-
+|<code>*</code>
+|Pop the last 2 values of the stack, multiply them and push the result
+|-
+|<code>/</code>
+|Pop the last 2 values of the stack, divide them and push the result
+|-
+|<code>%</code>
+|Pop the last 2 values of the stack, modulo them and push the result
+|-
+|<code>^</code>
+|Pop the last 2 values of the stack, power them and push the result
+|-
+|<code>¬</code>
+|Pop the last value of the stack, push the opposite
+|-
+|<code>></code>
+|Push 0 to the stack if the last value is positive
+|-
+|<code><</code>
+|Push 0 to the stack if the last value is negative
+|-
+|<code>→</code>
+|Move every value in the stack to the right
+|-
+|<code>←</code>
+|Move every value in the stack to the left
+|-
+|<code>⇄</code>
+|Swap the last 2 values of the stack
+|-
+|<code>↩</code>
+|Reverse the stack
+|-
+|<code>0</code>
+|Pop the last value of the stack
+|-
+|<code>2</code>
+|Duplicate the last value of the stack
+|-
+|<code>§</code>
+|Do nothing
+|}
+Any other character will return an error if readed by the interpreter but they won't do anything as long as they are not readed
+
+==Examples==
+===[[Hello, World!]]===
+  |               |
+   ppppppp§ §     |
+ H  |             |
+  e  |     p §    |
+   l  |           |
+    l  |    p §   |
+     o  |         |
+      ,  |   p §  |
+          |       |
+        w  |  p § |
+         o  |     |
+          r  | p §|
+           l  |   |
+            d  |p |
+             !    |
+              §§§§|
+This program push the ASCII value of each character of "Hello, World!" to the stack and print them one at the time
+
+===[[Cat program]]===
+  |     |
+  |2-0← |
+        |
+  !-i←>§|
+ 
+  |        |
+  |2+←<-0← |
+           |
+ ←0→p2←2→§§|
+This program takes an input from the user, if this input is not null it enters the 2nd block where it loops and print each character one at the time until the there's no value left in the stack
+
+===[[Truth machine]]===
+  |      |
+  |§2+0← |
+         |
+ 0 0i-⇄2+|
+ 
+  |    |
+  |20← |
+       |
+ ←0 1←p|
+ 
+  |  |
+  |§ |
+     |
+  0↩p|
+This program takes an input from the user, check if the input is one, then run the 2nd block (a loop printing 1) if yes, otherwise it goes to the 2nd block wich just print a 0 once
