@@ -114,10 +114,10 @@ This program push the ASCII value of each character of "Hello, World!" to the st
         |
   !-i←>§|
  
-  |        |
-  |2+←<-0← |
-           |
- ←0→p2←2→§§|
+  |       |
+  |2+←<0← |
+          |
+ ←0→p2←2→-|
 This program takes an input from the user, if this input is not null it enters the 2nd block where it loops and print each character one at the time until the there's no value left in the stack
 
 ===[[Truth machine]]===
@@ -136,3 +136,7 @@ This program takes an input from the user, if this input is not null it enters t
      |
   0↩p|
 This program takes an input from the user, check if the input is one, then run the 2nd block (a loop printing 1) if yes, otherwise it goes to the 2nd block wich just print a 0 once
+
+[[Category:Languages]]
+[[Category:2023]]
+[[Category:Turing complete]]
