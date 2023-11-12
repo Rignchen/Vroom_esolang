@@ -199,8 +199,8 @@ class vroom:
 					if len(self.stack) == 0: self.error("The stack is empty")
 					print(chr(self.stack[-1]),end="")
 					self.stack.pop(-1)
-				# i
-				case 105: #push a value input by the user at the beginning of the stack (each character a value + the len of the input)
+				# ⌨
+				case 9000:#push a value input by the user at the beginning of the stack (each character a value + the len of the input)
 					inp = input()
 					for i in inp:
 						self.stack.insert(0,ord(i))
@@ -309,7 +309,7 @@ All commands:
 # -> skip next instruction
 ? -> if the last value of the stack is not 0, skip next instruction
 p -> print the last value of the stack as ascii character
-i -> push a value input by the user at the beginning of the stack (each character a value + the len of the input)
+⌨ -> push a value input by the user at the beginning of the stack (each character a value + the len of the input)
 + -> pop the last 2 values of the stack, add them and push the result
 - -> pop the last 2 values of the stack, substract them and push the result
 * -> pop the last 2 values of the stack, multiply them and push the result
