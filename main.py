@@ -70,7 +70,6 @@ class vroom:
 	# Main code
 	def main(self, file_path: str):
 		"""Execute code from a .vroom file"""
-		self.tprint(listdir("code_demo"))
 		if file_path == None: file_path = input("Please enter the file's location: ")
 		if file_path.endswith((".vroom")): pass
 		elif file_path + ".vroom" in listdir("code_demo"): file_path = f"code_demo/{file_path}.vroom"
