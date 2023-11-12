@@ -14,7 +14,7 @@ The cursor starts in slot 1:1 (top left), it then move to 1:3 through the fastes
 Each time the cursor moves, it will run the instruction written under it (so 1:1 run the instruction in 1:2 and 42:314 runs 42:315)
 Once it reach the end of the program, it will go to the beginning of another block of code, the code is chosen by the last value of the stack
 If the stack is empty or the block doesn't exist, the program will stop
-Sice some ide replace <code>    </code> with a tabulation, tabulation are replaced by 4 spaces when the code is readed
+Sice some ide replace 2 spaces with a tabulation, tabulation are replaced by 4 spaces when the code is readed
 
 
 ==Commands==
