@@ -70,8 +70,11 @@ class vroom:
 	# Main code
 	def main(self, file_path: str):
 		"""Execute code from a .vroom file"""
+		self.tprint(listdir("code_demo"))
 		if file_path == None: file_path = input("Please enter the file's location: ")
-		if not file_path.endswith((".vroom")): self.error("The file needs to be a .vroom file",False)
+		if file_path.endswith((".vroom")): pass
+		elif file_path + ".vroom" in listdir("code_demo"): file_path = f"code_demo/{file_path}.vroom"
+		else: self.error("The file needs to be a .vroom file",False)
 		try:
 			with open(file_path,"r",encoding="utf-8") as f: code = f.read().replace("\t",4*" ").split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist",False)
@@ -296,7 +299,7 @@ class vroom:
 	pass
 
 if __name__ == "__main__": 
-	from os import system, name
+	from os import system, name, listdir
 	system("cls" if name == "nt" else "clear")
 	vroom(warn_error = warn_error, debug_mode = debug_mode, debug_step_mode = debug_step_mode, debug_pathfinding = debug_pathfinding, interpreter_debug_mode = interpreter_debug_mode)
 
