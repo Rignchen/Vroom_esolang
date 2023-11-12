@@ -6,12 +6,21 @@ As the code want to finish as fast as possible, it won't start if it can't find 
 Once it reaches the end, it will run the square of code specified at the top value of the stack if it exists.
 """
 
+from sys import argv
+def contain(list: list[str], value: str|tuple[str]) -> bool:
+	"""return True if the list contain the value"""
+	if isinstance(value, tuple):
+		for i in value:
+			if i in list: return True
+		return False
+	else: return value in list
+
 #interpreter settings
-warn_error: bool = False				# If true, the code will raise an error instead of a warning
-debug_mode: bool = False				# If true, the code will print information about the execution
-debug_step_mode: bool = False			# If true, the code will wait for a keypress between each step
-debug_pathfinding: bool = False			# If true, the code will print the pathfinding map before executing the code
-interpreter_debug_mode: bool = False	# If true, the code will print more information but those are not ment to be easy to read
+warn_error = contain(argv,("-w","--warn_error")) 					# If true, the code will raise an error instead of a warning
+debug_mode = contain(argv,("-d","--debug")) 						# If true, the code will print information about the execution
+debug_step_mode = contain(argv,("-s","--step")) 					# If true, the code will wait for a keypress between each step
+debug_pathfinding = contain(argv,("-m","--multi_line")) 			# If true, the code will print the pathfinding map before executing the code
+interpreter_debug_mode = contain(argv,("-i","--interpreter_debug")) # If true, the code will print more information but those are not ment to be easy to read
 
 class vroom:
 	def __init__(self, file_path:str = None, warn_error: bool = False, debug_mode: bool = False, debug_step_mode: bool = False, debug_pathfinding: bool = False, interpreter_debug_mode: bool = False) -> None:
@@ -70,13 +79,18 @@ class vroom:
 	# Main code
 	def main(self, file_path: str):
 		"""Execute code from a .vroom file"""
-		if file_path == None: file_path = input("Please enter the file's location: ")
+
+		if file_path == None: 
+			if len(argv) > 1: file_path = argv[1]
+			else: file_path = input("Please enter the file's location: ")
 		if file_path.endswith((".vroom")): pass
 		elif file_path + ".vroom" in listdir("code_demo"): file_path = f"code_demo/{file_path}.vroom"
 		else: self.error("The file needs to be a .vroom file",False)
+		
 		try:
 			with open(file_path,"r",encoding="utf-8") as f: code = f.read().replace("\t",4*" ").split("\n")
 		except FileNotFoundError: self.error(f"File {file_path} does not exist",False)
+
 		self.stack: list[int] = [] # The storage.make_blocks(code)
 		blocks = self.make_blocks(code)
 		while self.is_running and 0 <= self.current_block < len(blocks):
